@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1ad3cc9a-5c48-4455-b365-f18b3b16eef0" name="Default Changelist" comment="" />
+    <list default="true" id="1ad3cc9a-5c48-4455-b365-f18b3b16eef0" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="JsbtTreeLayoutManager">
     <layout place="tools.popupnpm">
@@ -13,6 +18,7 @@
     </layout>
   </component>
   <component name="ProjectId" id="1YTJ0Rn9Vhk34nGgDYVIEfgxalL" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -35,7 +41,7 @@
       <option name="presentableId" value="Default" />
       <updated>1582960427545</updated>
       <workItem from="1582960428748" duration="8220000" />
-      <workItem from="1582983794511" duration="909000" />
+      <workItem from="1582983794511" duration="1500000" />
     </task>
     <servers />
   </component>
