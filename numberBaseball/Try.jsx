@@ -2,9 +2,16 @@ import React, {Component} from 'react';
 
 class Try extends Component {
     render() {
+        const {tryInfo} = this.props;//'비구조화 할당' 이라고 부름. hook와 비슷
         return (
-            <li key={this.props.value.fruit}>{this.props.value.fruit} - {this.props.value.taste} - {this.props.index}</li>
-            /*map 반복의 효율을 위해 key를 항상` 적어주자.(i는 넣으면 안됨)*/
+            <li>
+                <div>
+                    {tryInfo.tryInfo.try}
+                </div>
+                <div>
+                    {tryInfo.tryInfo.result}
+                </div>
+            </li>
         )
     }
 }
