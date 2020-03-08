@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {useState} from 'react';
 import Try from './Try';
 
 function getNumbers() {
@@ -13,93 +13,80 @@ function getNumbers() {
     return array;
 }
 
-class NumberBaseball extends Component {
-    state = {
-        result: '',
-        value: '',
-        answer: getNumbers(),
-        tries: [],//추가할 때, push를 사용하면 안됨. react는 기존 state와 새로 바뀔 state를 비교 후 rerender를 하는데, push를 하면 하나의 변수만을 가지고 비교하게 되어 변경 감지를 못함
-    };
+const NumberBaseball = () => {
+    const [result, setResult] = useState('');
+    const [value, setValue] = useState('');
+    const [answer, setAnswer] = useState(getNumbers());
+    const [tries, setTries] = useState([]);
 
-    restart = (e) => {
-        this.setState({
-            result: '',
-            value: '',
-            answer: getNumbers(),
-            tries: []
-        });
+    const restart = (e) => {
+        setResult('');
+        setValue('');
+        setAnswer(getNumbers());
+        setTries([]);
     }
 
-    onSubmitForm = (e) => {
-        console.log(this.state.answer);
+    const onSubmitForm = (e) => {
         e.preventDefault();
-        if (this.state.value === this.state.answer.join('')) {
-            this.setState((prevState)=>{
-                return {
-                    result: '홈런!',
-                    tries: [...prevState.tries, {try: prevState.value, result: '홈런!'}],
-                }
+        if (value === answer.join('')) {
+            setResult('홈런!');
+            setTries((prevTries) => {
+                return [...prevTries, {try: value, result: '홈런!'}]
             });
         } else {
-            const answerArray = this.state.value.split('').map((v) => parseInt(v));
+            const answerArray = value.split('').map((v) => parseInt(v));
             let strike = 0;
             let ball = 0;
 
             for (let i = 0; i < 4; i++) {
-                if (answerArray[i] === this.state.answer[i]) {
+                if (answerArray[i] === answer[i]) {
                     strike++;
-                } else if (this.state.answer.includes(answerArray[i])) {
+                } else if (answer.includes(answerArray[i])) {
                     ball++;
                 }
-            }this.setState((prevState)=>{
-                return {
-                    tries: [...prevState.tries, {try: prevState.value, result: `${strike} 스트라이크, ${ball} 볼입니다.`}],
-                    value: ''
-                }
+            }
+            setTries((prevTries) => {
+                return [...prevTries, {try: value, result: `${strike} 스트라이크, ${ball} 볼입니다.`}]
             });
-            if (this.state.tries.length == 9) {
-                this.setState({
-                    result: `10번 틀려서 실패~! 답은 ${this.state.answer.join('')}였습니다!`,
-                });
+            setValue('');
+            if (tries.length == 9) {
+                setResult(`10번 틀려서 실패~! 답은 ${answer.join('')}였습니다!`);
             }
         }
     };
 
-    onChangeInput = (e) => {
-        this.setState({
-            value: e.target.value
-        });
+    const onChangeInput = (e) => {
+        setValue(e.target.value);
     };
 
-    render() {
-        return (
-            <>
-                {this.state.result === '' &&
-                <div>
-                    <form onSubmit={this.onSubmitForm}>
-                        <input maxLength={4} value={this.state.value} onChange={this.onChangeInput}/>
-                    </form>
-                </div>
+    return (
+        <>
+            {result === '' &&
+            <div>
+                <form onSubmit={onSubmitForm}>
+                    <input maxLength={4} value={value} onChange={onChangeInput}/>
+                </form>
+            </div>
+            }
+            {result !== '' &&
+            <div>
+                <h1>{result}</h1>
+                <button onClick={restart}>다시하기</button>
+            </div>
+            }
+            <div>시도 : {tries.length}</div>
+            <ul>
+                {/*배열 내 데이터를 일괄적으로 수정해야 할 경우, map을 사용하자*/
+                    tries.map((v, i) => {
+                            return <Try key={`${i + 1}차 시도:`} tryInfo={v} index={i}/>;
+                            /*key에 index는 최대한 지양해야 한다*/
+                        }
+                    )
                 }
-                {this.state.result !== '' &&
-                <div>
-                    <h1>{this.state.result}</h1>
-                    <button onClick={this.restart}>다시하기</button>
-                </div>
-                }
-                <div>시도 : {this.state.tries.length}</div>
-                <ul>
-                    {/*배열 내 데이터를 일괄적으로 수정해야 할 경우, map을 사용하자*/
-                        this.state.tries.map((v, i) => {
-                                return <Try key={`${i + 1}차 시도:`} tryInfo={v} index={i}/>;
-                                /*key에 index는 최대한 지양해야 한다*/
-                            }
-                        )
-                    }
-                </ul>
-            </>
-        );
-    }
+            </ul>
+        </>
+    );
 }
+
 
 export default NumberBaseball;
