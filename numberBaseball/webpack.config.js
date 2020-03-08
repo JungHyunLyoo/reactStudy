@@ -1,11 +1,10 @@
-
 const path = require('path');
 module.exports = {
     name: 'numberBaseball-setting',
-    mode: 'development',
+    mode: 'development',// 실서비스: production (크롬 우측 상단에 모드별로 아이콘이 생성됨)
     devtool: 'eval',
     resolve: {
-        extensions: ['.js','.jsx']
+        extensions: ['.js', '.jsx']
     },
     entry: {
         app: ['./client']
@@ -16,7 +15,7 @@ module.exports = {
             loader: 'babel-loader',
             options: {
                 presets: [
-                    ['@babel/preset-env',{
+                    ['@babel/preset-env', {
                         targets: {
                             browsers: ['> 1% in KR'],
                         },
@@ -32,7 +31,7 @@ module.exports = {
         }]
     },
     output: {
-        path: path.join(__dirname,'dist'),
+        path: path.join(__dirname, 'dist'),
         filename: "app.js",
         publicPath: "/dist/"
     }
