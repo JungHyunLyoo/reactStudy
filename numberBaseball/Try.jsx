@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {memo} from 'react';
 
-const Try = ({tryInfo}) => {//'비구조화 할당' 이라고 부름. hook와 비슷
+
+const Try = memo(({tryInfo}) => {//'비구조화 할당' 이라고 부름. hook와 비슷
     return (
         <li>
             <div>
@@ -11,6 +12,6 @@ const Try = ({tryInfo}) => {//'비구조화 할당' 이라고 부름. hook와 �
             </div>
         </li>
     );
-}
+});
 
 export default Try;
