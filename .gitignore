@@ -105,3 +105,9 @@ dist
 
 # IDE
 **/.idea/
+
+# NODE MODULE
+**/node_modules/
+
+# REACT DIST
+**/dist/
