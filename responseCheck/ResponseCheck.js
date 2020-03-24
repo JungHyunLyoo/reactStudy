@@ -1,4 +1,4 @@
-import React, {useState,useRef} from 'react';
+import React, {useState, useRef} from 'react';
 
 const ResponseCheck = () => {
     const [state, setState] = useState('waiting');
@@ -53,7 +53,15 @@ const ResponseCheck = () => {
             >
                 {message}
             </div>
-            {renderAverage()}
+            {(() => {
+                if(result.length !== 0){
+                    return <>
+                        <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+                        <button onClick={onReset}>리셋</button>
+                    </>
+                }
+            })()}
+            {/*{renderAverage()}*/}
         </>
     )
 }
