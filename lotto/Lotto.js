@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useMemo, useCallback} from 'react';
 import Ball from './Ball';
 
 function getWinNumbers() {
@@ -13,7 +13,8 @@ function getWinNumbers() {
 }
 
 const Lotto = () => {
-    const [winNumbers, setWinNumbers] = useState(getWinNumbers());
+    const lottoNumbers = useMemo(() => getWinNumbers(),[]);
+    const [winNumbers, setWinNumbers] = useState(lottoNumbers);
     const [winBalls, setWinBalls] = useState([]);
     const [bonus, setBonus] = useState(null);
     const [redo, setRedo] = useState(false);
@@ -38,13 +39,19 @@ const Lotto = () => {
     }, [timeouts.current]);
     //조건에 표현식도 됨!!!! 원래 표현식 자리였던건가?
 
-    const onClickRedo = () => {
+    //함수를 매번 생성시키면 너무 비효율적
+    //useCallback으로 한번만 생성되도록 함(기억하도록)
+    //useMemo는 값, useCallback은 함수를 각각 기억
+    //두번째 매개변수가 변경되어야 아래 내용이 적절하게 동작함
+    //useCallback은 자식 컴포넌트에 넘겨주는 메소드에 적용시키면 좋다.
+    //매번 새로운거 넘기면 계속 리렌더링 될 수도 있기 때문
+    const onClickRedo = useCallback(() => {
         setWinNumbers(getWinNumbers());
         setWinBalls([]);
         setBonus(null);
         setRedo(false);
         timeouts.current = [];
-    };
+    },[winNumbers]);
 
     return (
         <>
