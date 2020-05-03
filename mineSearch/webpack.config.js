@@ -5,14 +5,14 @@ module.exports = {
     mode: 'development',
     devtool: 'eval',
     resolve: {
-        extensions: ['.js']
+        extensions: ['.js','.jsx']
     },
     entry: {
         app: ['./client']
     },
     module: {
         rules: [{
-            test: /\.js?/,
+            test: /\.jsx?/,
             loader: 'babel-loader',
             options: {
                 presets: [
