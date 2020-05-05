@@ -1,4 +1,4 @@
-import React, {useCallback, useContext} from 'react';
+import React, {memo, useCallback, useContext, useMemo} from 'react';
 import {CLICK_MINE, CODE, FLAG_CELL, NORMALIZE_CELL, OPEN_CELL, QUESTION_CELL, TableContext} from "./MineSearch";
 
 const getTdStyle = (code) => {
@@ -45,11 +45,11 @@ const getTdText = (code) => {
         case CODE.QUESTION_MINE:
             return '?';
         default:
-            return '';
+            return code || '';
     }
 };
 
-const Td = ({rowIndex, cellIndex}) => {
+const Td = memo(({rowIndex, cellIndex}) => {
 
     const {tableData, dispatch, halted} = useContext(TableContext);
 
@@ -98,7 +98,8 @@ const Td = ({rowIndex, cellIndex}) => {
         }
     }, [tableData[rowIndex][cellIndex], halted]);
 
-    return (
+    //useMemo : 값 캐싱
+    return useMemo(() => (
         <>
             <td
                 style={getTdStyle(tableData[rowIndex][cellIndex])}
@@ -108,8 +109,8 @@ const Td = ({rowIndex, cellIndex}) => {
                 {getTdText(tableData[rowIndex][cellIndex])}
             </td>
         </>
+    ),tableData[rowIndex][cellIndex]);
 
-    )
-};
+});
 
 export default Td;

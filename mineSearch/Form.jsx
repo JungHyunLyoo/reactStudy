@@ -1,7 +1,7 @@
-import React, {useState, useCallback, useContext} from 'react';
+import React, {useState, useCallback, useContext, memo} from 'react';
 import {START_GAME, TableContext} from "./MineSearch";
-
-const Form = () => {
+//memo는 상위컴포넌트부터 하위 컴포넌트까지 다 적용시켜야 함
+const Form = memo(() => {
     const [row, setRow] = useState(10);
     const [cell, setCell] = useState(10);
     const [mine, setMine] = useState(20);
@@ -29,6 +29,6 @@ const Form = () => {
             <button onClick={onClickBtn}>시작</button>
         </div>
     );
-};
+});
 
 export default Form;

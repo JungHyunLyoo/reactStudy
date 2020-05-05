@@ -1,4 +1,4 @@
-import React, {useReducer, createContext, useMemo} from 'react';
+import React, {useReducer, createContext, useMemo, useEffect} from 'react';
 import Table from "./Table";
 import Form from "./Form";
 
@@ -55,9 +55,15 @@ const plantMine = (row, cell, mine) => {
 
 const initialState = {
     tableData: [],
+    data: {
+        row: 0,
+        cell: 0,
+        mine: 0,
+    },
     timer: 0,
     result: '',
-    halted: false,
+    halted: true,
+    openedCount: 0,
 };
 
 export const START_GAME = 'START_GAME';
@@ -66,22 +72,103 @@ export const CLICK_MINE = 'CLICK_MINE';
 export const FLAG_CELL = 'FLAG_CELL';
 export const QUESTION_CELL = 'QUESTION_CELL';
 export const NORMALIZE_CELL = 'NORMALIZE_CELL';
+export const INCREMENT_TIMER = 'INCREMENT_TIMER';
 
 const reducer = (state, action) => {
     switch (action.type) {
         case START_GAME:
             return {
                 ...state,
+                data: {
+                    row: action.row,
+                    cell: action.cell,
+                    mine: action.mine
+                },
+                result: '',
                 tableData: plantMine(action.row, action.cell, action.mine),
                 halted: false,
+                openedCount: 0,
+                timer: 0,
             };
         case OPEN_CELL: {
             const tableData = [...state.tableData];
-            tableData[action.row] = [...state.tableData[action.row]];
-            tableData[action.row][action.cell] = CODE.OPENED;
+            tableData.forEach((row, i) => {
+                tableData[i] = [...state.tableData[i]];
+            });
+            const checked = [];//다이나믹프로그래밍과 비슷
+            let openedCount = 0;
+            const checkAround = (row, cell) => {
+                if ([CODE.OPENED, CODE.FLAG_MINE, CODE.FLAG, CODE.QUESTION_MINE, CODE.QUESTION].includes(tableData[row][cell])) {
+                    return;
+                }
+                if (row < 0 || row >= tableData.length || cell < 0 || cell >= tableData[0].length) {
+                    return;
+                }
+                if (checked.includes(row + ',' + cell)) {
+                    return;
+                } else {
+                    checked.push(row + ',' + cell);
+                }
+                let around = [];
+                if (tableData[row - 1]) {
+                    around = around.concat(
+                        tableData[row - 1][cell - 1],
+                        tableData[row - 1][cell],
+                        tableData[row - 1][cell + 1],
+                    );
+                }
+                around = around.concat(
+                    tableData[row][cell - 1],
+                    tableData[row][cell + 1],
+                );
+                if (tableData[row + 1]) {
+                    around = around.concat(
+                        tableData[row + 1][cell - 1],
+                        tableData[row + 1][cell],
+                        tableData[row + 1][cell + 1],
+                    );
+                }
+                const count = around.filter((v) => [CODE.MINE, CODE.FLAG_MINE, CODE.QUESTION_MINE].includes(v)).length;
+                if (count === 0) {
+                    const near = [];
+                    if (row - 1 > -1) {
+                        near.push([row - 1, cell - 1]);
+                        near.push([row - 1, cell]);
+                        near.push([row - 1, cell + 1]);
+                    }
+                    near.push([row, cell - 1]);
+                    near.push([row, cell + 1]);
+                    if (row + 1 > tableData.length) {
+                        near.push([row + 1, cell - 1]);
+                        near.push([row + 1, cell]);
+                        near.push([row + 1, cell + 1]);
+                    }
+                    near.forEach((n) => {
+                        if (tableData[n[0]][n[1]] !== CODE.OPENED) {
+                            checkAround(n[0], n[1]);
+                        }
+                    })
+                }
+                if (tableData[row][cell] === CODE.NORMAL) {
+                    //닫힌 칸일 때만 증가
+                    openedCount++;
+                }
+                tableData[row][cell] = count;
+            };
+            checkAround(action.row, action.cell);
+            let halted = false;
+            let result = '';
+            if (state.data.row * state.data.cell - state.data.mine === state.openedCount + openedCount) {
+                //승리
+                halted = true;
+                result = `${state.timer}초만에 승리하셨습니다.`;
+            }
             return {
                 ...state,
                 tableData,
+                openedCount: state.openedCount + openedCount,
+                halted,
+                result,
             };
         }
         case CLICK_MINE: {
@@ -133,6 +220,12 @@ const reducer = (state, action) => {
                 tableData,
             };
         }
+        case INCREMENT_TIMER: {
+            return {
+                ...state,
+                timer: state.timer + 1,
+            }
+        }
         default:
             return state;
     }
@@ -148,6 +241,18 @@ const MineSearch = () => {
     const value = useMemo(() => ({
         tableData: tableData, halted: halted, dispatch
     }), [tableData, halted]);
+
+    useEffect(() => {
+        let timer;
+        if (halted === false) {
+            timer = setInterval(() => {
+                dispatch({type: INCREMENT_TIMER});
+            }, 1000);
+        }
+        return () => {
+            clearInterval(timer);
+        }
+    }, [halted]);
 
     return (
         <TableContext.Provider value={value}>
